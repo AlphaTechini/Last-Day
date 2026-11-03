@@ -109,11 +109,11 @@ export function createMattermostConnector(config: ConnectionConfig, options: Con
 			if (user.status === 404) return { confirmed: true, observed: 'user no longer exists (404)', calls };
 			if (!user.ok) return { confirmed: false, observed: `read-back failed: ${user.error}`, calls };
 			const deleteAt = Number(user.data.delete_at) || 0;
-			if (action === 'mattermost.deactivate') return { confirmed: deleteAt > 0, observed: `delete_at: ${deleteAt}${deleteAt > 0 ? ' (deactivated)' : ''}`, calls };
+			if (action === 'mattermost.deactivate') return { confirmed: deleteAt > 0, observed: deleteAt > 0 ? 'deactivated (delete_at set)' : 'still active (delete_at: 0)', calls };
 			if (action === 'mattermost.revoke_sessions') {
 				const s = await sessionCount(calls, account.externalId);
 				if (!s.res.ok) return { confirmed: false, observed: `sessions read-back failed: ${s.res.error}`, calls };
-				return { confirmed: s.count === 0, observed: `delete_at: ${deleteAt}, sessions: ${s.count}`, calls };
+				return { confirmed: s.count === 0, observed: `${deleteAt > 0 ? 'deactivated (delete_at set)' : 'still active (delete_at: 0)'}, sessions: ${s.count}`, calls };
 			}
 			return { confirmed: false, observed: `unsupported action ${action}`, calls };
 		},

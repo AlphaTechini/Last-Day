@@ -60,6 +60,7 @@
 						{/if}
 					</div>
 				{/if}
+				{#if step.readBack}<div class="step-rb">{step.readBack}</div>{/if}
 			</div>
 		</li>
 	{/each}
@@ -78,6 +79,13 @@
 </ol>
 
 <style>
+	.step-rb {
+		margin-top: 2px;
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		color: var(--text-3);
+		overflow-wrap: anywhere;
+	}
 	.steps {
 		position: relative;
 		display: flex;

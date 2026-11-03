@@ -165,3 +165,11 @@ export function secondsBetween(a: string | null | undefined, b: string | null | 
 	if (!a || !b) return null;
 	return Math.max(0, (new Date(b).getTime() - new Date(a).getTime()) / 1000);
 }
+
+/** Identity line for an account: display name in full, the primary email, then "+N more" (tooltip lists the rest). */
+export function identityLine(name: string | null | undefined, emails: string[], skipName?: string | null): { text: string; title: string | undefined } {
+	const parts = [name && name !== skipName ? name : null, ...emails].filter((p): p is string => !!p);
+	const shown = parts.slice(0, 2);
+	const rest = parts.slice(2);
+	return { text: [...shown, ...(rest.length ? [`+${rest.length} more`] : [])].join(' · '), title: rest.length ? rest.join('\n') : undefined };
+}

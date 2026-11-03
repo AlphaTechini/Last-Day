@@ -391,6 +391,8 @@ const runBase = {
 	startedBy: 'Marcus Webb',
 	itemCount: 9,
 	aiCostUsd: 0.0012,
+	regressedCount: 0,
+	regressedItemIds: [],
 	employee: dana,
 	stats: { foundByRules: 6, foundByAi: 2, servers: 1, secondsToGreen: null, aiCalls: 3, aiTokens: 4812 },
 	canApprove: true,
@@ -539,7 +541,9 @@ export const runRegressed: RunDetail = {
 	startedBy: 'Marcus Webb',
 	verifiedAt: iso(tSam + 38_000),
 	itemCount: 4,
-	verifiedCount: 4,
+	verifiedCount: 2,
+	regressedCount: 2,
+	regressedItemIds: [`item_${samGh.id}`, `item_${samKey.id}`],
 	aiCostUsd: 0.0009,
 	recheck: { status: 'regressed', dueAt: ago(3 * HOUR), firedAt: ago(3 * HOUR) },
 	employee: samir,
@@ -579,6 +583,8 @@ export const runFailed: RunDetail = {
 	verifiedAt: null,
 	itemCount: 3,
 	verifiedCount: 2,
+	regressedCount: 0,
+	regressedItemIds: [],
 	aiCostUsd: 0.0004,
 	recheck: null,
 	employee: nina,
@@ -618,7 +624,8 @@ const summary = (r: RunDetail): RunSummary => ({
 	itemCount: r.itemCount,
 	verifiedCount: r.verifiedCount,
 	aiCostUsd: r.aiCostUsd,
-	recheck: r.recheck
+	recheck: r.recheck,
+	regressedCount: r.regressedCount
 });
 
 const ethanRun: RunSummary = {
@@ -631,6 +638,7 @@ const ethanRun: RunSummary = {
 	verifiedAt: null,
 	itemCount: 6,
 	verifiedCount: 0,
+	regressedCount: 0,
 	aiCostUsd: 0.0007,
 	recheck: null
 };
@@ -645,6 +653,7 @@ const oskarRun: RunSummary = {
 	verifiedAt: iso(NOW - 9 * DAY + 52_000),
 	itemCount: 7,
 	verifiedCount: 7,
+	regressedCount: 0,
 	aiCostUsd: 0.0011,
 	recheck: { status: 'clean', dueAt: iso(NOW - 8 * DAY), firedAt: iso(NOW - 8 * DAY) }
 };

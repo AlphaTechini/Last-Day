@@ -1,4 +1,5 @@
 // Offboarding runs: build the review (exact / probable / servers), HR decisions, approvals, retries, destroy approval.
+import { accountLabel } from './labels.ts';
 import { sql } from '#lib/server/db/index.ts';
 import { audit } from '#lib/server/audit.ts';
 import type { ActionKind, Connector } from '#lib/server/connectors/types.ts';
@@ -16,7 +17,7 @@ type Row = Record<string, any>;
 const SYSTEM_ORDER: SystemId[] = ['keycloak', 'mattermost', 'github', 'vultr'];
 const PROBABLE_MIN_CONFIDENCE = 0.5;
 
-const label = (a: Row) => a.username ?? a.display_name ?? a.external_id;
+const label = (a: Row) => accountLabel({ kind: a.kind, username: a.username, display_name: a.display_name ?? a.displayName, external_id: a.external_id ?? a.externalId });
 
 interface Planned {
 	account: Row;
@@ -243,7 +244,7 @@ export async function approveItemsImpl(runId: string, itemIds: string[] | 'all',
 			itemId: i.id,
 			accountId: i.account_id,
 			system: i.system,
-			account: i.username ?? i.display_name ?? i.external_id,
+			account: label(i),
 			actions: parseSteps(i.steps_json).map((s) => s.action as ActionKind)
 		}));
 		const [approval] = await tx`
@@ -304,11 +305,11 @@ export async function destroyServerImpl(runId: string, itemId: string, actor: Ac
 		else steps.push(pendingStep('vultr.destroy_instance'));
 		const [approval] = await tx`
 			INSERT INTO approvals (run_id, approver_id, scope, item_ids, action_list)
-			VALUES (${runId}, ${actor.id}, 'manager_destroy', ${[itemId]}, ${tx.json([{ itemId, system: i.system, account: i.username ?? i.display_name ?? i.external_id, actions: ['vultr.destroy_instance'] }] as never)}) RETURNING id`;
+			VALUES (${runId}, ${actor.id}, 'manager_destroy', ${[itemId]}, ${tx.json([{ itemId, system: i.system, account: label(i), actions: ['vultr.destroy_instance'] }] as never)}) RETURNING id`;
 		await tx`UPDATE run_items SET status = 'destroying', destroy_approval_id = ${approval.id}, last_error = NULL, steps_json = ${tx.json(steps as never)} WHERE id = ${itemId}`;
 		return { ...(i as Row), approvalId: approval.id as string } as Row;
 	});
-	await audit({ actorId: actor.id, actorName: actor.name, runId, employeeId: item.employee_id, system: item.system, kind: 'approval', summary: `${actor.name} approved destroying ${item.username ?? item.display_name ?? item.external_id}`, detail: { approvalId: item.approvalId, scope: 'manager_destroy', itemId } });
+	await audit({ actorId: actor.id, actorName: actor.name, runId, employeeId: item.employee_id, system: item.system, kind: 'approval', summary: `${actor.name} approved destroying ${label(item)}`, detail: { approvalId: item.approvalId, scope: 'manager_destroy', itemId } });
 	enqueueJob(item.system, { type: 'destroy', itemId, runId });
 }
 

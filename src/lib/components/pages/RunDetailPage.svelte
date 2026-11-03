@@ -71,7 +71,7 @@
 			return proposedCount
 				? `Found ${plural(counted.length, 'account')}. ${proposedCount} need your decision.`
 				: `Found ${plural(counted.length, 'account')}. Ready for your approval.`;
-		if (run.status === 'regressed') return `Access came back on ${plural(regressedCount || (run.recheckResult?.diff.length ?? 0), 'account')}`;
+		if (run.status === 'regressed') return `Access came back on ${plural(regressedCount || run.regressedItemIds.length, 'account')}`;
 		if (allGreen) return `All ${counted.length} confirmed${run.stats.secondsToGreen != null ? ` in ${duration(run.stats.secondsToGreen)}` : ''}`;
 		return `${doneCount} of ${counted.length} confirmed`;
 	});

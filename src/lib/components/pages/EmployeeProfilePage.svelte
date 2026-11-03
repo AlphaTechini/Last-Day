@@ -25,7 +25,7 @@
 	import ActionForm from '#lib/components/ui/ActionForm.svelte';
 	import RunRow from '#lib/components/run/RunRow.svelte';
 	import { ACCOUNT_KIND, LINK_METHOD } from '#lib/ui/status.ts';
-	import { date, firstName, moneyMonthly, plural } from '#lib/ui/format.ts';
+	import { date, firstName, identityLine, moneyMonthly, plural } from '#lib/ui/format.ts';
 	import type { EmployeeProfilePageData, PageProps } from '#lib/ui/page-data.ts';
 
 	let { data, form }: PageProps<EmployeeProfilePageData> = $props();
@@ -116,7 +116,7 @@
 											{:else if a.kind === 'invitation'}
 												{a.emails.join(' · ')}{#if a.createdAt}, sent {date(a.createdAt)}{/if}
 											{:else}
-												{[a.displayName !== a.username ? a.displayName : null, ...a.emails].filter(Boolean).join(' · ')}
+												<span title={identityLine(a.displayName, a.emails, a.username).title}>{identityLine(a.displayName, a.emails, a.username).text}</span>
 											{/if}
 										</p>
 									</div>

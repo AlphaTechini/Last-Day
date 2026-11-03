@@ -62,6 +62,9 @@
 		}
 		return parts;
 	});
+	// Show the name in full, then the primary email; everything else folds into "+N more" with a tooltip.
+	const idShown = $derived(a.kind === 'user' || a.kind === 'service' ? secondary.slice(0, 2) : secondary);
+	const idMore = $derived(secondary.slice(idShown.length));
 
 	// Expansion: running and failed items open themselves so progress is visible.
 	let userToggled = $state<boolean | null>(null);
@@ -108,9 +111,10 @@
 			</div>
 			{#if secondary.length}
 				<p class="secondary">
-					{#each secondary as s, i (s)}
+					{#each idShown as s, i (s)}
 						{#if i > 0}<span class="sep" aria-hidden="true">·</span>{/if}<span class="truncate">{s}</span>
 					{/each}
+					{#if idMore.length}<span class="sep" aria-hidden="true">·</span><span class="more" title={idMore.join('\n')}>+{idMore.length} more</span>{/if}
 				</p>
 			{/if}
 		</div>
@@ -345,6 +349,15 @@
 	}
 	.sep {
 		color: var(--text-3);
+	}
+	.secondary > :global(.truncate:first-child) {
+		flex: none;
+		max-width: 60%;
+	}
+	.more {
+		flex: none;
+		color: var(--text-3);
+		cursor: help;
 	}
 	.badges {
 		display: flex;

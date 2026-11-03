@@ -56,7 +56,7 @@ describe('mappers', () => {
 		});
 		expect(s).toEqual({
 			id: 'r', employeeId: 'e', employeeName: 'Dana', status: 'verified', startedAt: '2026-01-01T00:00:00.000Z', startedBy: 'system', verifiedAt: null,
-			itemCount: 4, verifiedCount: 3, aiCostUsd: 0.0012, recheck: { status: 'pending', dueAt: '2026-01-02T00:00:00.000Z', firedAt: null }
+			itemCount: 4, verifiedCount: 3, regressedCount: 0, aiCostUsd: 0.0012, recheck: { status: 'pending', dueAt: '2026-01-02T00:00:00.000Z', firedAt: null }
 		});
 		expect(mapRunSummary({ id: 'r', employee_id: 'e', employee_name: 'D', status: 'review', started_at: new Date(), ai_cost_usd: '0' }).recheck).toBeNull();
 	});

@@ -254,12 +254,12 @@ export function createVultrConnector(config: ConnectionConfig, options: Connecto
 			switch (action) {
 				case 'vultr.suspend_user': {
 					const s = await suspendedUsers(calls);
-					if (s.available && s.ids.has(account.externalId)) return { confirmed: true, observed: 'user listed in organization suspended-users', calls };
+					if (s.available && s.ids.has(account.externalId)) return { confirmed: true, observed: 'suspended (listed in organization suspended-users)', calls };
 					const res = await http.request(calls, { path: `/users/${enc(account.externalId)}` });
 					if (res.status === 404) return { confirmed: true, observed: 'user no longer exists (404)', calls };
 					if (res.ok) {
 						const u = (res.data?.user ?? res.data) as V;
-						if (s.available && s.emails.has(String(u.email ?? '').toLowerCase())) return { confirmed: true, observed: 'user listed in organization suspended-users (matched by email)', calls };
+						if (s.available && s.emails.has(String(u.email ?? '').toLowerCase())) return { confirmed: true, observed: 'suspended (listed in suspended-users, matched by email)', calls };
 						if (u.api_enabled === false) return { confirmed: true, observed: `suspend was not possible${s.available ? '' : ' (no organization)'}; API access disabled instead (api_enabled: false)`, calls };
 					}
 					return { confirmed: false, observed: s.available ? 'not in suspended-users and api_enabled is still true' : 'suspended-users unavailable and api_enabled is still true', calls };
@@ -269,7 +269,7 @@ export function createVultrConnector(config: ConnectionConfig, options: Connecto
 					const k = await userKeys(calls, user);
 					if (k.supported) {
 						const there = k.keys.some((x) => String(x.id) === account.externalId);
-						return { confirmed: !there, observed: there ? 'API key still listed' : `API key no longer listed (${k.keys.length} keys remain)`, calls };
+						return { confirmed: !there, observed: there ? 'API key still listed' : `key deleted (${k.keys.length} ${k.keys.length === 1 ? 'key remains' : 'keys remain'})`, calls };
 					}
 					const res = await http.request(calls, { path: `/users/${enc(user)}` });
 					if (res.status === 404) return { confirmed: true, observed: 'owning user no longer exists (404)', calls };
@@ -284,7 +284,7 @@ export function createVultrConnector(config: ConnectionConfig, options: Connecto
 						if (res.status === 404) return { confirmed: true, observed: 'instance no longer exists (404)', calls };
 						if (!res.ok) return { confirmed: false, observed: `read-back failed: ${res.error}`, calls };
 						const i = (res.data?.instance ?? res.data) as V;
-						if (i.power_status === 'stopped') return { confirmed: true, observed: `power_status: stopped (status: ${i.status})`, calls };
+						if (i.power_status === 'stopped') return { confirmed: true, observed: 'stopped', calls };
 						if (attempt >= 4) return { confirmed: false, observed: `power_status: ${i.power_status}`, calls };
 						await http.pause();
 					}
@@ -304,7 +304,7 @@ export function createVultrConnector(config: ConnectionConfig, options: Connecto
 					const cost = snapshotMonthlyCost(compressed || size);
 					return {
 						confirmed: true,
-						observed: `snapshot complete, ${((compressed || size) / 1e9).toFixed(2)} GB compressed, about $${cost.toFixed(2)}/month (billing estimate)`,
+						observed: `snapshot complete (${((compressed || size) / 1e9).toFixed(2)} GB, about $${cost.toFixed(2)}/month)`,
 						calls,
 						output: { snapshotId: sid, sizeBytes: size, compressedSizeBytes: compressed, snapshotSizeGb: Math.round(((compressed || size) / 1e9) * 1000) / 1000, snapshotMonthlyCostUsd: cost }
 					};
@@ -312,7 +312,7 @@ export function createVultrConnector(config: ConnectionConfig, options: Connecto
 				case 'vultr.destroy_instance': {
 					for (let attempt = 0; ; attempt++) {
 						const res = await getInstance(calls, account.externalId);
-						if (res.status === 404) return { confirmed: true, observed: 'GET instance returns 404 (destroyed)', calls };
+						if (res.status === 404) return { confirmed: true, observed: 'destroyed (instance returns 404)', calls };
 						if (!res.ok) return { confirmed: false, observed: `read-back failed: ${res.error}`, calls };
 						if (attempt >= 4) return { confirmed: false, observed: 'instance still exists', calls };
 						await http.pause();

@@ -102,6 +102,7 @@ export interface ActionStep {
 	endpoint: string | null; // "PUT /admin/realms/company/users/{id}"
 	httpStatus: number | null;
 	at: string | null;
+	readBack?: string; // what the system reported when this step was verified
 }
 
 export interface RunSummary {
@@ -113,7 +114,8 @@ export interface RunSummary {
 	startedBy: string;
 	verifiedAt: string | null;
 	itemCount: number;
-	verifiedCount: number;
+	verifiedCount: number; // items confirmed and still clean (a regressed run excludes the items that came back)
+	regressedCount: number; // distinct items the re-check found switched back on
 	aiCostUsd: number;
 	recheck: { status: RecheckStatus; dueAt: string; firedAt: string | null } | null;
 }
@@ -121,6 +123,7 @@ export interface RunSummary {
 export interface RunDetail extends RunSummary {
 	employee: EmployeeDetail;
 	items: RunItemView[];
+	regressedItemIds: string[]; // run item ids that came back, from the re-check diff
 	stats: {
 		foundByRules: number;
 		foundByAi: number;

@@ -1,5 +1,6 @@
 // Re-check timer: the only scheduled job. docs/ARCHITECTURE.md section 3.7.
 // One setTimeout per pending rechecks row, re-armed from the database on start, claimed atomically when fired.
+import { accountLabel } from './labels.ts';
 import { sql } from '#lib/server/db/index.ts';
 import { audit } from '#lib/server/audit.ts';
 import type { ActionKind, Connector } from '#lib/server/connectors/types.ts';
@@ -13,6 +14,8 @@ import { verifyAction } from './verifier.ts';
 
 const MAX_TIMER_MS = 2 ** 31 - 1;
 const SYSTEM_ACTOR: Actor = { id: null, name: 'system', role: 'system' };
+
+const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 
 export interface RecheckDiffEntry {
 	itemId: string;
@@ -57,7 +60,7 @@ export async function scheduleRecheck(runId: string): Promise<Date> {
 		INSERT INTO rechecks (run_id, due_at, status) VALUES (${runId}, ${dueAt}, 'pending')
 		ON CONFLICT (run_id) DO UPDATE SET due_at = EXCLUDED.due_at, status = 'pending', result_json = NULL, fired_at = NULL`;
 	armTimer(runId, dueAt.getTime());
-	await audit({ runId, kind: 'recheck', summary: `Re-check scheduled for ${dueAt.toISOString()} (in ${delay}s)`, detail: { dueAt: dueAt.toISOString(), delaySeconds: delay } });
+	await audit({ runId, kind: 'recheck', summary: `Re-check scheduled in ${delay >= 120 ? `${Math.round(delay / 60)} minutes` : delay === 60 ? '1 minute' : `${delay} seconds`}`, detail: { dueAt: dueAt.toISOString(), delaySeconds: delay } });
 	return dueAt;
 }
 
@@ -82,7 +85,7 @@ async function checkRun(runId: string): Promise<{ diff: RecheckDiffEntry[]; chec
 		const system = it.system as SystemId;
 		if (!connectors.has(system)) connectors.set(system, await getConnector(system).catch(() => null));
 		const connector = connectors.get(system);
-		const label = `${SYSTEM_NAMES[system]}: ${it.username ?? it.display_name ?? it.external_id}`;
+		const label = `${SYSTEM_NAMES[system]}: ${accountLabel(it)}`;
 		const steps: ActionStep[] = parseSteps(it.steps_json).filter((s) => s.status === 'done');
 		// A destroyed server only needs to still be gone; halting/snapshot steps no longer apply to it.
 		const toCheck = it.status === 'removed' ? steps.filter((s) => s.action === 'vultr.destroy_instance') : steps.filter((s) => s.action !== 'vultr.destroy_instance');
@@ -122,7 +125,7 @@ export async function fireRecheck(runId: string, actor: Actor): Promise<'clean' 
 			runId,
 			employeeId: run?.employee_id ?? null,
 			kind: 'recheck',
-			summary: status === 'clean' ? `Re-check: still clean (${checked} checks)` : `Re-check: REGRESSED, ${diff.length} of ${checked} checks failed`,
+			summary: status === 'clean' ? `Re-check: still clean, all ${checked} checks passed` : `Re-check: ${plural(new Set(diff.map((d) => d.itemId)).size, 'account')} came back (${diff.length} of ${checked} checks failed)`,
 			detail: { status, checked, diff }
 		});
 		return status;

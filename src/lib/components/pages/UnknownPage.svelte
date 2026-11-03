@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { identityLine } from '#lib/ui/format.ts';
 	import Sparkles from '@lucide/svelte/icons/sparkles';
 	import Link2 from '@lucide/svelte/icons/link-2';
 	import Bot from '@lucide/svelte/icons/bot';
@@ -70,7 +71,7 @@
 								<span class="kind">{SYSTEM_NAMES[a.system]} {ACCOUNT_KIND[a.kind].toLowerCase()}</span>
 							</p>
 							<p class="acct-sub">
-								{[a.displayName !== a.username ? a.displayName : null, ...a.emails].filter(Boolean).join(' · ') || 'No name or email on the account'}
+								<span title={identityLine(a.displayName, a.emails, a.username).title}>{identityLine(a.displayName, a.emails, a.username).text || 'No name or email on the account'}</span>
 							</p>
 							<p class="acct-meta">
 								{#if a.createdAt}<span>Created <RelativeTime date={a.createdAt} /></span>{/if}

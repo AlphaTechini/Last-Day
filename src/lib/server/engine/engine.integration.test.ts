@@ -296,7 +296,7 @@ describe('offboarding lifecycle', () => {
 			expect(i.steps_json.every((s: any) => s.status === 'done' && s.httpStatus === 200)).toBe(true);
 		}
 		const dana = done.find((i) => i.username === 'dana.okafor')!;
-		expect(dana.verified_state).toBe('enabled: false; sessions: 0');
+		expect(dana.verified_state).toBe('enabled: false, sessions: 0');
 		expect(kc.get('user', 'kc-dana')).toMatchObject({ active: false });
 		expect(kc.get('user', 'kc-priya')).toMatchObject({ active: true }); // other people untouched
 		expect(gh.get('user', 'dok-dev')).toBeUndefined();

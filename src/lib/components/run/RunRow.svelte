@@ -6,6 +6,7 @@
 	import RelativeTime from '#lib/components/ui/RelativeTime.svelte';
 
 	let { run, note }: { run: RunSummary; note?: string } = $props();
+	const regressed = $derived(run.status === 'regressed' && run.regressedCount > 0);
 	const pct = $derived(run.itemCount ? Math.round((run.verifiedCount / run.itemCount) * 100) : 0);
 	const tone = $derived(run.status === 'regressed' || run.status === 'failed' ? 'danger' : run.status === 'verified' ? 'success' : run.status === 'partial' ? 'warning' : 'accent');
 </script>
@@ -16,9 +17,9 @@
 		<span class="name">{run.employeeName}</span>
 		<span class="sub">{note ?? `Started by ${run.startedBy}`} · <RelativeTime date={run.startedAt} /></span>
 	</span>
-	<span class="prog" aria-label="{run.verifiedCount} of {run.itemCount} confirmed">
+	<span class="prog" aria-label={regressed ? `${run.regressedCount} came back, ${run.verifiedCount} of ${run.itemCount} still clean` : `${run.verifiedCount} of ${run.itemCount} confirmed`}>
 		<span class="track"><span class="fill tone-{tone}" style:width="{pct}%"></span></span>
-		<span class="num frac">{run.verifiedCount}/{run.itemCount}</span>
+		<span class="num frac" class:bad={regressed}>{#if regressed}{run.regressedCount} came back{:else}{run.verifiedCount}/{run.itemCount}{/if}</span>
 	</span>
 	<span class="st"><StatusPill kind="run" value={run.status} size="sm" /></span>
 	<ChevronRight size={15} strokeWidth={2} class="chev" aria-hidden="true" />
@@ -92,6 +93,10 @@
 		color: var(--text-2);
 		min-width: 3ch;
 		text-align: right;
+		white-space: nowrap;
+	}
+	.frac.bad {
+		color: var(--danger);
 	}
 	.st {
 		display: flex;

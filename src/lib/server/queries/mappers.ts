@@ -119,6 +119,7 @@ export function mapEmployeeDetail(r: Row): EmployeeDetail {
 }
 
 export function mapRunSummary(r: Row): RunSummary {
+	const regressedCount = num0(r.regressed_count);
 	return {
 		id: r.id,
 		employeeId: r.employee_id,
@@ -128,7 +129,8 @@ export function mapRunSummary(r: Row): RunSummary {
 		startedBy: r.started_by_name ?? 'system',
 		verifiedAt: iso(r.verified_at),
 		itemCount: num0(r.item_count),
-		verifiedCount: num0(r.verified_count),
+		verifiedCount: Math.max(0, num0(r.verified_count) - regressedCount),
+		regressedCount,
 		aiCostUsd: num0(r.ai_cost_usd),
 		recheck: r.recheck_status
 			? { status: r.recheck_status as RecheckStatus, dueAt: iso(r.recheck_due_at)!, firedAt: iso(r.recheck_fired_at) }

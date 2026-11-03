@@ -78,7 +78,7 @@
 						<td data-label="Confirmed">
 							<span class="prog">
 								<span class="track"><span class="fill tone-{tone(r)}" style:width="{pct}%"></span></span>
-								<span class="num frac">{r.verifiedCount}/{r.itemCount}</span>
+								<span class="num frac">{#if r.status === 'regressed' && r.regressedCount > 0}{r.regressedCount} came back{:else}{r.verifiedCount}/{r.itemCount}{/if}</span>
 							</span>
 						</td>
 						<td data-label="Click to green" class="num">{#if secs != null}{duration(secs)}{:else}<span class="subtle">Not yet</span>{/if}</td>

@@ -1,5 +1,6 @@
 // Executor: deterministic code that performs approved actions. One in-process queue per system, one item at a
 // time per system (different systems run concurrently). Retries with backoff, idempotent per step.
+import { accountLabel } from './labels.ts';
 import { sql } from '#lib/server/db/index.ts';
 import { audit } from '#lib/server/audit.ts';
 import type { ActionKind, ApiCallRecord, Connector } from '#lib/server/connectors/types.ts';
@@ -57,6 +58,12 @@ async function worker(system: SystemId): Promise<void> {
 	}
 }
 
+/** Merges per-step read-backs into one line: drops repeats and any read-back that a longer one already starts with. */
+export function summarizeReadBacks(observed: string[]): string {
+	const uniq = [...new Set(observed.map((o) => o.trim()).filter(Boolean))];
+	return uniq.filter((o) => !uniq.some((other) => other !== o && other.startsWith(o))).join(', ');
+}
+
 /** Resolves when no executor job is queued or running. */
 export function waitForExecutorIdle(): Promise<void> {
 	const s = state();
@@ -96,7 +103,6 @@ async function loadItem(itemId: string): Promise<ItemRow | null> {
 }
 
 const accountRef = (i: ItemRow): AccountRef => ({ externalId: i.external_id, kind: i.kind as AccountRef['kind'], parentExternalId: i.parent_external_id, username: i.username, raw: i.raw_json ?? {} });
-const accountLabel = (i: ItemRow) => i.username ?? i.display_name ?? i.external_id;
 
 async function saveSteps(itemId: string, steps: ActionStep[]): Promise<void> {
 	await sql`UPDATE run_items SET steps_json = ${sql.json(steps as never)} WHERE id = ${itemId}`;
@@ -219,10 +225,11 @@ async function processRevoke(itemId: string): Promise<void> {
 			employeeId: item.employee_id,
 			system: item.system,
 			kind: 'verify',
-			summary: `${SYSTEM_NAMES[item.system]} ${label}: ${step.label} ${v.confirmed ? 'confirmed' : 'NOT confirmed'} (${v.observed})`,
+			summary: `${SYSTEM_NAMES[item.system]} ${label}: ${step.label} ${v.confirmed ? 'confirmed' : 'not confirmed'} (${v.observed})`,
 			detail: { itemId, action: step.action, confirmed: v.confirmed, readBack: v.observed, timedOut: v.timedOut, polls: v.attempts, calls: v.calls, ...(c ? { method: c.method, endpoint: c.endpoint, status: c.status } : {}) }
 		});
 		observed.push(v.observed);
+		step.readBack = v.observed;
 		if (step.action === 'vultr.snapshot_instance' && v.confirmed && v.output) {
 			// The snapshot's own read-back is the authority on its size and cost.
 			const c = Number(v.output.snapshotMonthlyCostUsd);
@@ -236,7 +243,7 @@ async function processRevoke(itemId: string): Promise<void> {
 		}
 	}
 	await saveSteps(itemId, steps);
-	const verifiedState = [...new Set(observed)].join('; ');
+	const verifiedState = summarizeReadBacks(observed);
 
 	if (!allConfirmed) {
 		await sql`UPDATE run_items SET status = 'failed', verified_state = ${verifiedState}, last_error = ${`Not confirmed by the system. ${firstFailure}`} WHERE id = ${itemId}`;
@@ -301,7 +308,7 @@ async function processDestroy(itemId: string): Promise<void> {
 		employeeId: item.employee_id,
 		system: item.system,
 		kind: 'verify',
-		summary: `${SYSTEM_NAMES[item.system]} ${label}: destroy ${v.confirmed ? 'confirmed' : 'NOT confirmed'} (${v.observed})`,
+		summary: `${SYSTEM_NAMES[item.system]} ${label}: destroy ${v.confirmed ? 'confirmed' : 'not confirmed'} (${v.observed})`,
 		detail: { itemId, action: 'vultr.destroy_instance', confirmed: v.confirmed, readBack: v.observed, calls: v.calls, ...(c ? { method: c.method, endpoint: c.endpoint, status: c.status } : {}) }
 	});
 	if (!v.confirmed) {

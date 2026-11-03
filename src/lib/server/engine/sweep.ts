@@ -1,5 +1,6 @@
 // Sweep: pull accounts from every connector, upsert, link by rules, ask the AI about the rest,
 // and flag accounts of already-offboarded people that are active again.
+import { accountLabel } from './labels.ts';
 import { sql } from '#lib/server/db/index.ts';
 import { audit } from '#lib/server/audit.ts';
 import type { Connector, NormalizedAccount } from '#lib/server/connectors/types.ts';
@@ -192,7 +193,7 @@ export async function linkByRules(actor: Actor, runId: string | null): Promise<L
 			if (inserted.length) {
 				newLinks++;
 				linkedByAccount.set(`${r.system}|${r.external_id}`, { ...r, link_employee_id: m.employeeId, link_method: m.method, confirmed: true, link_confidence: 1 });
-				await audit({ actorId: actor.id, actorName: actor.name, runId, employeeId: m.employeeId, system: r.system, kind: 'match', summary: `Rule ${m.method.replace('rule:', '')}: ${r.system} ${r.username ?? r.external_id} linked to ${employees.names.get(m.employeeId)}`, detail: { accountId: r.id, method: m.method, confidence: 1, evidence: m.evidence } });
+				await audit({ actorId: actor.id, actorName: actor.name, runId, employeeId: m.employeeId, system: r.system, kind: 'match', summary: `Rule ${m.method.replace('rule:', '')}: ${SYSTEM_NAMES[r.system as SystemId]} ${accountLabel(r)} linked to ${employees.names.get(m.employeeId)}`, detail: { accountId: r.id, method: m.method, confidence: 1, evidence: m.evidence } });
 				continue;
 			}
 		}

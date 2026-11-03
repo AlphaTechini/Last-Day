@@ -8,6 +8,7 @@ const SUMMARY_SELECT = sql`
 	r.id, r.employee_id, e.name AS employee_name, r.status, r.started_at, u.name AS started_by_name, r.verified_at, r.ai_cost_usd,
 	(SELECT count(*)::int FROM run_items i WHERE i.run_id = r.id AND i.status <> 'rejected') AS item_count,
 	(SELECT count(*)::int FROM run_items i WHERE i.run_id = r.id AND i.status IN ${sql([...VERIFIED_ITEM_STATUSES])}) AS verified_count,
+	(SELECT count(DISTINCT d->>'itemId')::int FROM jsonb_array_elements(CASE WHEN jsonb_typeof(c.result_json->'diff') = 'array' THEN c.result_json->'diff' ELSE '[]'::jsonb END) d WHERE c.status = 'regressed' AND EXISTS (SELECT 1 FROM run_items ri WHERE ri.run_id = r.id AND ri.id::text = d->>'itemId')) AS regressed_count,
 	c.status AS recheck_status, c.due_at AS recheck_due_at, c.fired_at AS recheck_fired_at`;
 
 const SUMMARY_FROM = sql`
@@ -77,6 +78,7 @@ export async function getRunDetail(runId: string, user: SessionUser | null): Pro
 		...summary,
 		employee: employeeDto,
 		items,
+		regressedItemIds: rc?.status === 'regressed' ? [...new Set(mapRecheckDiff(rc.result_json).map((d) => d.itemId))].filter((id) => items.some((i) => i.id === id)) : [],
 		stats: {
 			foundByRules: itemRows.filter((r) => String(r.item_link_method ?? '').startsWith('rule:')).length,
 			foundByAi: itemRows.filter((r) => r.item_link_method === 'ai').length,
