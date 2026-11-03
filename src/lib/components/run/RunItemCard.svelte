@@ -98,7 +98,7 @@
 	aria-labelledby="{uid}-name"
 >
 	<div class="head">
-		<ItemStatusIcon status={item.status} />
+		<ItemStatusIcon status={regression ? 'failed' : item.status} />
 		<div class="ident">
 			<div class="name-row">
 				<h4 class="name" id="{uid}-name">
@@ -127,7 +127,11 @@
 		</div>
 
 		<div class="status">
-			<StatusPill kind="item" value={item.status} size="sm" />
+			{#if regression}
+				<StatusPill kind="run" value="regressed" label="Came back" size="sm" />
+			{:else}
+				<StatusPill kind="item" value={item.status} size="sm" />
+			{/if}
 		</div>
 
 		<button
@@ -208,7 +212,7 @@
 
 	{#if item.verifiedState && !open && item.status === 'verified'}
 		<div class="readback">
-			<span class="rb-label">Confirmed by {SYSTEM_NAMES[a.system]}</span>
+			<span class="rb-label" class:was={!!regression}>{regression ? 'Earlier read-back' : `Confirmed by ${SYSTEM_NAMES[a.system]}`}</span>
 			<code>{item.verifiedState}</code>
 			{#if item.verifiedAt}<span class="rb-at num">{time(item.verifiedAt)}</span>{/if}
 		</div>
@@ -493,6 +497,9 @@
 		color: var(--success-text);
 		font-weight: var(--weight-medium);
 	}
+	.rb-label.was {
+		color: var(--text-3);
+	}
 	.readback code {
 		font-size: 11.5px;
 		color: var(--text-2);
@@ -585,6 +592,15 @@
 		}
 		.readback {
 			flex-wrap: wrap;
+		}
+		.secondary {
+			flex-wrap: wrap;
+			white-space: normal;
+			gap: 0 6px;
+		}
+		.secondary :global(.truncate) {
+			white-space: normal;
+			overflow-wrap: anywhere;
 		}
 		.readback code {
 			white-space: normal;

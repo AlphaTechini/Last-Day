@@ -45,8 +45,10 @@
 	const servers = $derived(run.items.filter((i) => i.matchKind === 'server'));
 
 	const DONE = new Set(['verified', 'removed', 'awaiting_manager']);
+	const regressionByItem = $derived(new Map((run.recheckResult?.diff ?? []).map((d) => [d.itemId, d.observed])));
 	const counted = $derived(run.items.filter((i) => i.status !== 'rejected'));
-	const doneCount = $derived(counted.filter((i) => DONE.has(i.status)).length);
+	const regressedCount = $derived(counted.filter((i) => regressionByItem.has(i.id)).length);
+	const doneCount = $derived(counted.filter((i) => DONE.has(i.status) && !regressionByItem.has(i.id)).length);
 	const proposedCount = $derived(run.items.filter((i) => i.status === 'proposed').length);
 	const failedItems = $derived(run.items.filter((i) => i.status === 'failed'));
 	const allGreen = $derived(counted.length > 0 && doneCount === counted.length);
@@ -54,10 +56,9 @@
 	const segments: Segment[] = $derived([
 		{ value: doneCount, tone: 'success', label: 'Confirmed' },
 		{ value: counted.filter((i) => i.status === 'running' || i.status === 'destroying').length, tone: 'accent', label: 'Running' },
-		{ value: failedItems.length, tone: 'danger', label: 'Failed' }
+		{ value: failedItems.length + regressedCount, tone: 'danger', label: 'Failed or came back' }
 	]);
 
-	const regressionByItem = $derived(new Map((run.recheckResult?.diff ?? []).map((d) => [d.itemId, d.observed])));
 
 	const elapsed = $derived.by(() => {
 		if (run.stats.secondsToGreen != null) return run.stats.secondsToGreen;
@@ -70,7 +71,7 @@
 			return proposedCount
 				? `Found ${plural(counted.length, 'account')}. ${proposedCount} need your decision.`
 				: `Found ${plural(counted.length, 'account')}. Ready for your approval.`;
-		if (run.status === 'regressed') return 'Access came back after revocation';
+		if (run.status === 'regressed') return `Access came back on ${plural(regressedCount || (run.recheckResult?.diff.length ?? 0), 'account')}`;
 		if (allGreen) return `All ${counted.length} confirmed${run.stats.secondsToGreen != null ? ` in ${duration(run.stats.secondsToGreen)}` : ''}`;
 		return `${doneCount} of ${counted.length} confirmed`;
 	});
@@ -91,7 +92,7 @@
 		el?.focus({ preventScroll: true });
 	}
 
-	const groupDone = (items: RunItemView[]) => items.filter((i) => DONE.has(i.status)).length;
+	const groupDone = (items: RunItemView[]) => items.filter((i) => DONE.has(i.status) && !regressionByItem.has(i.id)).length;
 	const groupTotal = (items: RunItemView[]) => items.filter((i) => i.status !== 'rejected').length;
 	const runShortId = $derived(run.id.replace(/^run_/, '').toUpperCase());
 </script>
@@ -283,11 +284,6 @@
 <style>
 	.block {
 		margin-bottom: var(--space-4);
-	}
-	.dot-sep::before {
-		content: '·';
-		margin-right: 10px;
-		color: var(--text-3);
 	}
 
 	/* ---------- Overview ---------- */
@@ -512,17 +508,18 @@
 	}
 	.facts div {
 		display: flex;
+		flex-wrap: wrap;
 		justify-content: space-between;
-		gap: 12px;
+		gap: 2px 12px;
 	}
 	.facts dt {
 		color: var(--text-3);
 		flex: none;
 	}
 	.facts dd {
-		margin: 0;
+		margin: 0 0 0 auto;
 		text-align: right;
-		min-width: 0;
+		max-width: 100%;
 		overflow-wrap: anywhere;
 	}
 	.facts .mono {
@@ -596,8 +593,8 @@
 		.ov-headline {
 			font-size: var(--text-lg);
 		}
-		.ov-n {
-			font-size: 24px;
+		.ov-count {
+			display: none;
 		}
 		.g-count {
 			display: none;

@@ -120,16 +120,16 @@
 								</span>
 							</a>
 						</td>
-						<td data-label="Role"><span class="role">{e.role}</span><span class="dept-sub">{e.department}</span></td>
-						<td data-label="Manager" class="muted-cell">{e.managerName ?? 'None'}</td>
-						<td data-label="Systems">
+						<td data-label="Role" class="role-cell"><span class="role">{e.role}</span><span class="dept-sub">{e.department}</span></td>
+						<td data-label="Manager" class="muted-cell hide-sm">{e.managerName ?? 'None'}</td>
+						<td data-label="Systems" class="hide-sm">
 							<span class="systems" aria-label="{e.accountCount} accounts in {e.systems.length} systems">
 								{#each e.systems as s (s)}<SystemIcon system={s} size={22} />{/each}
 								{#if !e.systems.length}<span class="none">No active accounts</span>{/if}
 							</span>
 						</td>
-						<td data-label="Started" class="muted-cell num">{date(e.startDate)}</td>
-						<td data-label="Status"><StatusPill kind="employee" value={e.status} size="sm" /></td>
+						<td data-label="Started" class="muted-cell num hide-sm">{date(e.startDate)}</td>
+						<td data-label="Status" class="status-cell"><StatusPill kind="employee" value={e.status} size="sm" /></td>
 					</tr>
 				{/each}
 			</tbody>
@@ -333,8 +333,34 @@
 		:global(.form-grid) {
 			grid-template-columns: 1fr;
 		}
-		.systems {
-			justify-content: flex-end;
+		:global(.table-wrap tr:has(.role-cell)) {
+			display: grid !important;
+			grid-template-columns: minmax(0, 1fr) auto;
+			column-gap: 12px;
+		}
+		.status-cell {
+			grid-column: 2;
+			grid-row: 1;
+		}
+		.status-cell::before,
+		.role-cell::before {
+			display: none !important;
+		}
+		.role-cell {
+			grid-column: 1 / -1;
+			justify-content: flex-start !important;
+			gap: 6px;
+			padding-left: 40px !important;
+			padding-top: 0 !important;
+			font-size: var(--text-xs);
+			color: var(--text-2) !important;
+		}
+		.role-cell .dept-sub::before {
+			content: '· ';
+		}
+		.role,
+		.dept-sub {
+			display: inline;
 		}
 	}
 </style>

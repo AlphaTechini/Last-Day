@@ -196,6 +196,18 @@ dialog {
 	align-items: center;
 }
 
+.dot-sep::before {
+	content: '·';
+	margin-right: 10px;
+	color: var(--text-3);
+}
+
+@media (max-width: 720px) {
+	.dot-sep::before {
+		display: none;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,

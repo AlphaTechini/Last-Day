@@ -93,7 +93,7 @@
 		<div class="cell">
 			<span class="cell-label">{removed ? 'Still billing' : 'Power'}</span>
 			<span class="cell-value num">{removed ? moneyMonthly(stillBilling) : (a.powerStatus ?? 'unknown')}</span>
-			<span class="cell-hint">{removed ? 'Snapshot only' : (item.verifiedState ?? 'Read from the Vultr API')}</span>
+			<span class="cell-hint wrap">{removed ? 'Snapshot only' : (item.verifiedState ?? 'Read from the Vultr API')}</span>
 		</div>
 	</div>
 
@@ -282,6 +282,12 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
+	.cell-hint.wrap {
+		white-space: normal;
+		font-family: var(--font-mono);
+		font-size: 11px;
+		line-height: 1.4;
+	}
 	.cell-hint .mono {
 		font-size: 11px;
 	}
@@ -415,14 +421,34 @@
 			margin-left: 0;
 		}
 		.money {
-			grid-template-columns: 1fr;
+			grid-template-columns: 1fr 1fr;
+		}
+		.cell.billing {
+			grid-column: 1 / -1;
 		}
 		.cell + .cell {
 			border-left: 0;
 			border-top: 1px solid var(--border);
 		}
+		.cell:last-child {
+			border-left: 1px solid var(--border);
+		}
 		.top {
-			flex-wrap: wrap;
+			align-items: flex-start;
+		}
+		.meta {
+			flex-direction: column;
+		}
+		.meta .sep {
+			display: none;
+		}
+		.track {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 8px;
+		}
+		.bar {
+			display: none;
 		}
 		.foot {
 			flex-wrap: wrap;

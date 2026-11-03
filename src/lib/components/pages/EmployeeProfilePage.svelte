@@ -89,7 +89,7 @@
 	</div>
 {/if}
 
-<div class="layout">
+<div class="layout" class:offboarding={e.status === 'offboarding'}>
 	<div class="main">
 		<Card padding="none" title="Accounts" description="{plural(data.accounts.length, 'account')} across {plural(groups.length, 'system')}, {activeCount} still active.{aiCount ? ` ${aiCount} found by the AI resolver under other names.` : ''}">
 			{#if groups.length}
@@ -113,6 +113,8 @@
 												{a.plan}{#if a.region}, {a.region}{/if}{#if a.monthlyCostUsd != null}, <span class="num">{moneyMonthly(a.monthlyCostUsd)}</span>{/if}
 											{:else if a.kind === 'apikey'}
 												Key <span class="mono">{a.externalId}</span>
+											{:else if a.kind === 'invitation'}
+												{a.emails.join(' · ')}{#if a.createdAt}, sent {date(a.createdAt)}{/if}
 											{:else}
 												{[a.displayName !== a.username ? a.displayName : null, ...a.emails].filter(Boolean).join(' · ')}
 											{/if}
@@ -224,11 +226,6 @@
 	.block {
 		margin-bottom: var(--space-4);
 	}
-	.dot-sep::before {
-		content: '·';
-		margin-right: 10px;
-		color: var(--text-3);
-	}
 	.layout {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) 300px;
@@ -326,6 +323,9 @@
 		width: 6px;
 		height: 6px;
 		border-radius: 50%;
+		background: var(--gray-9);
+	}
+	.offboarding .sdot {
 		background: var(--warning-strong);
 	}
 	.state.off {

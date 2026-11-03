@@ -138,5 +138,9 @@
 		.bar :global(.btn) {
 			width: 100%;
 		}
+		.muted,
+		.ico {
+			display: none;
+		}
 	}
 </style>

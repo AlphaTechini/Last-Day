@@ -89,6 +89,7 @@
 		text-decoration: none;
 		border: 1px solid transparent;
 		user-select: none;
+		flex-shrink: 0;
 		transition:
 			background-color var(--dur-1) var(--ease-out),
 			border-color var(--dur-1) var(--ease-out),
@@ -98,6 +99,9 @@
 	}
 	.btn:hover {
 		text-decoration: none;
+	}
+	.btn :global(svg) {
+		flex: none;
 	}
 	.btn:active:not(:disabled) {
 		transform: translateY(0.5px);

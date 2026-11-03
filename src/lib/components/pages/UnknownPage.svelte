@@ -99,7 +99,7 @@
 								</ul>
 							{/if}
 						{:else}
-							<p class="note">No likely owner found.{#if a.evidence.length} {a.evidence[0]}.{/if}</p>
+							<p class="note">{['No likely owner found.', a.evidence.length ? `${a.evidence[0]}.` : ''].join(' ')}</p>
 						{/if}
 					</div>
 

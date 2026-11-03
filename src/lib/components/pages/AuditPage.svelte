@@ -66,7 +66,7 @@
 
 <PageHeader title="Audit log" description="Every sweep, decision, approval and API call, with what each system said back." />
 
-<form method="GET" class="filters" data-sveltekit-keepfocus data-sveltekit-noscroll aria-label="Filter the audit log">
+<form method="GET" class="filters" data-sveltekit-reset="false" aria-label="Filter the audit log">
 	<Select name="employee" size="sm" value={f.employee ?? ''} onchange={autoSubmit} aria-label="Employee">
 		<option value="">All employees</option>
 		{#each data.employees as e (e.id)}<option value={e.id}>{e.name}</option>{/each}
@@ -104,7 +104,7 @@
 							<span class="s">{#if e.system}<SystemIcon system={e.system} size={18} bare />{/if}</span>
 							<span class="sum">
 								<span class="sum-text">{e.summary}</span>
-								<span class="who">{e.actor === 'system' ? 'Last Day' : e.actor}{#if e.employeeName} · {e.employeeName}{/if}</span>
+								<span class="who">{[e.actor === 'system' ? 'Last Day' : e.actor, e.employeeName].filter(Boolean).join(' · ')}</span>
 							</span>
 							<span class="call">
 								{#if d.method && d.status != null}
@@ -179,6 +179,9 @@
 		color: var(--text-2);
 		background: var(--surface-2);
 		border-bottom: 1px solid var(--border-subtle);
+	}
+	.day:first-child {
+		border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 	}
 	.day:not(:first-child) {
 		border-top: 1px solid var(--border-subtle);
