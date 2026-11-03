@@ -12,6 +12,8 @@ export default defineConfig({
 			// origin check. Allow local http origins (and any extra, comma-separated, via CSRF_TRUSTED_ORIGINS at build time).
 			csrf: {
 				trustedOrigins: [
+					'http://localhost:3000',
+					'http://127.0.0.1:3000',
 					'http://localhost:3300',
 					'http://127.0.0.1:3300',
 					...(process.env.CSRF_TRUSTED_ORIGINS ?? '').split(',').map((s) => s.trim()).filter(Boolean)

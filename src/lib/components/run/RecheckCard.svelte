@@ -64,7 +64,7 @@
 				</div>
 			</div>
 			<ul class="diff" role="list">
-				{#each diff as d (d.itemId)}
+				{#each diff as d (`${d.itemId}|${d.label}`)}
 					<li>
 						<span class="d-label">{d.label}</span>
 						<span class="d-obs">{d.observed}</span>

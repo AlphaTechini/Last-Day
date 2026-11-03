@@ -5,6 +5,7 @@ import type { Actor } from './index.ts';
 import { clearRecheckTimer } from './recheck.ts';
 import { sweepAllImpl } from './sweep.ts';
 import { errMessage, state } from './state.ts';
+import { CONTRACTOR, OPS_BOT } from '#lib/server/demo/company.ts';
 
 export function demoDomain(): string {
 	return (process.env.DEMO_EMAIL_DOMAIN || 'northwind.example').trim().toLowerCase();
@@ -50,6 +51,8 @@ export async function wipeDemoData(): Promise<WipeCounts> {
 			await tx`DELETE FROM account_links WHERE employee_id IN ${tx(empIds)}`;
 			await tx`UPDATE employees SET status = 'active', end_date = NULL WHERE is_demo`;
 		}
+		// Admin decisions on the demo's unlinked accounts (service / flagged) must not survive a reset.
+		await tx`UPDATE accounts SET flag = 'unlinked' WHERE flag <> 'unlinked' AND username IN ${tx([OPS_BOT.username, CONTRACTOR.username])}`;
 		for (const id of runIds) clearRecheckTimer(id);
 		return { runs: runIds.length, accounts: accIds.length };
 	});

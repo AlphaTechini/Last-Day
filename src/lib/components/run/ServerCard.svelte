@@ -45,6 +45,7 @@
 	const uid = $props.id();
 
 	const headline = $derived.by(() => {
+		if (s === 'proposed') return `AI thinks ${firstName} launched this server${a.confidence != null ? ` (${Math.round(a.confidence * 100)}% sure)` : ''}. Confirm before it is halted.`;
 		if (removed) return 'Removed. The server is destroyed and confirmed gone.';
 		if (s === 'destroying') return 'Destroying the server now.';
 		if (s === 'awaiting_manager')
@@ -74,6 +75,25 @@
 	</div>
 
 	<p class="headline">{headline}</p>
+
+	{#if s === 'proposed'}
+		<div class="proposal">
+			{#if item.account.evidence?.length}
+				<ul>
+					{#each item.account.evidence as ev (ev)}<li>{ev}</li>{/each}
+				</ul>
+			{/if}
+			{#if canApprove}
+				<ActionForm action="decide" class="decision" successToast={false}>
+					{#snippet children({ pending })}
+						<input type="hidden" name="itemId" value={item.id} />
+						<Button type="submit" name="decision" value="yes" variant="primary" size="sm" icon={Check} disabled={pending}>Yes, {firstName} launched it</Button>
+						<Button type="submit" name="decision" value="no" variant="secondary" size="sm" disabled={pending}>Not {firstName}</Button>
+					{/snippet}
+				</ActionForm>
+			{/if}
+		</div>
+	{/if}
 
 	<div class="money">
 		<div class="cell" class:billing={!removed}>
@@ -164,6 +184,23 @@
 {/if}
 
 <style>
+	.proposal {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		margin: var(--space-2) 0 var(--space-3);
+	}
+	.proposal ul {
+		margin: 0;
+		padding-left: 18px;
+		font-size: var(--text-sm, 13px);
+		color: var(--text-secondary, inherit);
+	}
+	.proposal :global(.decision) {
+		display: flex;
+		gap: 8px;
+		flex-wrap: wrap;
+	}
 	.server {
 		padding: 16px;
 		background: var(--surface);

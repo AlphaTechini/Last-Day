@@ -18,6 +18,7 @@
 		"benchmark": "tsx scripts/benchmark-matching.ts",
 		"mock": "tsx scripts/mock-company/server.ts",
 		"connect:mock": "tsx scripts/connect-mock.ts",
+		"e2e": "node tests/e2e/demo-flow.mjs",
 		"prepare": "svelte-kit sync || echo ''"
 	},
 	"imports": {

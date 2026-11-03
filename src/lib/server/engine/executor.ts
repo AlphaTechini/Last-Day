@@ -236,7 +236,7 @@ async function processRevoke(itemId: string): Promise<void> {
 		}
 	}
 	await saveSteps(itemId, steps);
-	const verifiedState = observed.join('; ');
+	const verifiedState = [...new Set(observed)].join('; ');
 
 	if (!allConfirmed) {
 		await sql`UPDATE run_items SET status = 'failed', verified_state = ${verifiedState}, last_error = ${`Not confirmed by the system. ${firstFailure}`} WHERE id = ${itemId}`;

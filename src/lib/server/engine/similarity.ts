@@ -145,8 +145,10 @@ export function nameSimilarity(candidate: string | null | undefined, personName:
 	const hasFirst = cand.some((t) => sameGivenName(t, p.first));
 	const hasLast = !!p.last && cand.includes(p.last);
 	const initialLast = !!p.last && cand.some((t) => t.length === 1 && t === p.first[0]) && hasLast;
+	const firstPlusInitial = hasFirst && !!p.last && cand.some((t) => t.length === 1 && t === p.last[0]);
 	if (hasFirst && hasLast) return { score: 0.9, reason: `name "${candidate}" contains first and last name` };
 	if (initialLast) return { score: 0.8, reason: `name "${candidate}" is first initial plus last name` };
+	if (firstPlusInitial) return { score: 0.7, reason: `name "${candidate}" is first name plus last initial` };
 	// fused tokens such as "dokafor" or "danaokafor" are handled by handleSimilarity; here compare whole strings.
 	const jw = jaroWinkler(cand.join(''), p.all.join(''));
 	if (jw >= 0.92) return { score: jw * 0.9, reason: `name "${candidate}" is very similar` };

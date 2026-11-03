@@ -40,11 +40,13 @@ export async function getNavCounts(user: SessionUser) {
 			(SELECT count(*)::int FROM accounts a WHERE a.gone_at IS NULL AND a.flag <> 'service'
 				AND NOT EXISTS (SELECT 1 FROM account_links l WHERE l.account_id = a.id)) AS unknown_count,
 			(SELECT count(*)::int FROM runs WHERE status IN ${sql(NEEDS_ATTENTION_STATUSES)}) AS attention_count,
-			(SELECT count(*)::int FROM employees WHERE is_demo) AS demo_count`;
+			(SELECT count(*)::int FROM employees WHERE is_demo) AS demo_count,
+			(SELECT count(*)::int FROM employees) AS employee_count`;
 	const destroys = await pendingDestroys(user);
 	return {
 		nav: { unknownCount: num0(row.unknown_count), needsAttentionCount: num0(row.attention_count), pendingDestroyCount: destroys.length },
-		isDemo: num0(row.demo_count) > 0
+		// A judge, or an empty install, must be able to reach "Reset demo company" before any demo data exists.
+		isDemo: num0(row.demo_count) > 0 || user.role === 'judge' || num0(row.employee_count) === 0
 	};
 }
 
