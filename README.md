@@ -17,10 +17,12 @@ Captured against the local sandbox (see [section 10](#10-run-it-locally-in-5-min
 
 | | |
 |---|---|
-| ![Run in review](evidence/screenshots/sandbox/run-review.png) | ![Run verified](evidence/screenshots/sandbox/run-verified.png) |
+| ![Run in review](evidence/screenshots/sandbox/09-run-review.png) | ![Run verified](evidence/screenshots/sandbox/14-run-all-green.png) |
 | Review: exact matches, AI probable matches with evidence, a server with its monthly cost | Verified: every line green only after the system confirmed it |
-| ![Dashboard](evidence/screenshots/sandbox/dashboard.png) | ![Employee profile](evidence/screenshots/sandbox/employee.png) |
-| Dashboard | Employee profile with linked accounts and Offboard now |
+| ![Dashboard](evidence/screenshots/sandbox/22-dashboard-needs-attention.png) | ![Employee profile](evidence/screenshots/sandbox/07-employee-profile-dana.png) |
+| Dashboard after a 24h re-check found access that came back | Employee profile with linked accounts and Offboard now |
+| ![Manager destroys the server](evidence/screenshots/sandbox/19-manager-server-removed.png) | ![Audit log](evidence/screenshots/sandbox/24-audit-ai-call.png) |
+| Manager's second approval: server destroyed, only the snapshot still bills | Audit log: every API call and every AI call with model, tokens and cost |
 
 ## 1. Contents
 
@@ -194,11 +196,11 @@ URL: `<app URL>`. Login: `<shared in submission form>` (judge role).
 1. Sign in with the judge login.
 2. On the dashboard, click **Reset demo company** (re-seeds Northwind Labs through the real APIs).
 3. Open **Employees**, then **Dana Okafor**, and click **Offboard now**.
-4. On the run page review the exact matches, the AI probable matches (evidence and confidence) and the leftover server with its monthly cost. Confirm or reject each probable match, then approve.
+4. On the run page review the exact matches, the AI probable matches (evidence and confidence) and the leftover server with its monthly cost. Click **Yes, that's Dana** or **Not Dana** on each probable match. **Approve revocation** stays disabled until every probable match is decided; then click it.
 5. Watch the lines turn green one by one as each system confirms. Compare with the Keycloak, Mattermost, GitHub and Vultr consoles if you wish.
 6. Open the **Audit log** to see each API call, and the run's AI cost.
 7. Click **Re-check now** on the run: expect "still clean".
-8. The server card says "still billing" until the manager approves destroy (sign in as the manager to see that second approval).
+8. The server card says "still billing" and "Awaiting manager" after it is halted and snapshotted. Only the leaver's manager (or an admin) can destroy it: the judge can destroy servers of demo employees too, so click **Destroy** on the server card to see the second approval; still-billing then drops to the snapshot cost.
 
 ## 10. Run it locally in 5 minutes
 
@@ -309,6 +311,7 @@ docs/                        product, architecture and API notes
 ```bash
 pnpm test     # Vitest: matcher, resolver, connectors, engine and query integration tests (need Postgres), permissions, CSV, seed
 pnpm check    # svelte-check and TypeScript
+pnpm e2e      # Playwright browser run of flows 1-10 against a running app + sandbox (see tests/e2e/demo-flow.mjs header)
 pnpm build    # production build
 ```
 
