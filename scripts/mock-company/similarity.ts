@@ -44,6 +44,11 @@ function parseJsonLoose(text: string): unknown {
 	try {
 		return JSON.parse(text);
 	} catch {
+		try {
+			return JSON.parse(text.split(/\n\s*\n/)[0]); // JSON followed by a free-text reminder
+		} catch {
+			/* fall through */
+		}
 		const a = text.indexOf('{');
 		const b = text.lastIndexOf('}');
 		if (a >= 0 && b > a) {
@@ -71,7 +76,7 @@ export function extract(text: string): { people: PersonView[]; account: AccountV
 				const work = emails[0] ?? null;
 				people.push({ id: strs([o.employee_id, o.employeeId, o.id])[0] ?? null, name: strs([o.name, o.full_name, o.fullName])[0] ?? '', emails, domain: work?.split('@')[1] ?? null });
 			} else if (isAccount(o) && (!account || /account|candidate/i.test(path))) {
-				const raw = (o.raw ?? {}) as Obj;
+				const raw = (o.raw ?? o.metadata ?? {}) as Obj;
 				const profile = (raw.profile ?? {}) as Obj;
 				account = {
 					handles: strs([o.username, o.login, raw.username, raw.login]),
