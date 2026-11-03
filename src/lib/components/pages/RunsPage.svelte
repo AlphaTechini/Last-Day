@@ -54,7 +54,7 @@
 					<th>Leaver</th>
 					<th>Status</th>
 					<th>Confirmed</th>
-					<th>Click to green</th>
+					<th class="num">Click to green</th>
 					<th>Re-check</th>
 					<th class="num">AI cost</th>
 					<th>Started</th>

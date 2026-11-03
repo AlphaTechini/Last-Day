@@ -349,14 +349,14 @@
 		.role-cell {
 			grid-column: 1 / -1;
 			justify-content: flex-start !important;
-			gap: 6px;
+			gap: 0;
 			padding-left: 40px !important;
 			padding-top: 0 !important;
 			font-size: var(--text-xs);
 			color: var(--text-2) !important;
 		}
 		.role-cell .dept-sub::before {
-			content: '· ';
+			content: '\00a0·\00a0';
 		}
 		.role,
 		.dept-sub {
