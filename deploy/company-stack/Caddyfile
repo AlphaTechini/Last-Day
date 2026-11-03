@@ -1,0 +1,11 @@
+# Public HTTPS on two sslip.io hostnames (certificates are issued automatically by Let's Encrypt).
+# KEYCLOAK_HOST / MATTERMOST_HOST come from .env, e.g. sso.203-0-113-10.sslip.io and chat.203-0-113-10.sslip.io.
+{$KEYCLOAK_HOST} {
+	encode zstd gzip
+	reverse_proxy keycloak:8080
+}
+
+{$MATTERMOST_HOST} {
+	encode zstd gzip
+	reverse_proxy mattermost:8065
+}

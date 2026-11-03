@@ -2,7 +2,7 @@
 	import type { HTMLInputAttributes } from 'svelte/elements';
 	import type { LucideIcon } from '@lucide/svelte';
 
-	interface Props extends Omit<HTMLInputAttributes, 'value'> {
+	interface Props extends Omit<HTMLInputAttributes, 'value' | 'size'> {
 		value?: string | number | null;
 		invalid?: boolean;
 		icon?: LucideIcon;

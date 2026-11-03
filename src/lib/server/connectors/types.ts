@@ -52,6 +52,8 @@ export interface VerifyResult {
 	observed: string; // human readable read-back, e.g. "enabled: false, sessions: 0"
 	calls: ApiCallRecord[];
 	pending?: boolean; // e.g. snapshot still being created; verifier should poll again
+	/** Optional structured read-back (additive): e.g. { snapshotId, compressedSizeBytes, snapshotSizeGb, snapshotMonthlyCostUsd } for vultr.snapshot_instance. */
+	output?: Record<string, unknown>;
 }
 
 export interface HealthResult {

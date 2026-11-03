@@ -11,6 +11,7 @@
 	}: { children: Snippet; stack?: 'sm' | 'none'; dense?: boolean; label?: string } = $props();
 </script>
 
+<!-- svelte-ignore a11y_no_noninteractive_tabindex (scrollable region must be keyboard reachable) -->
 <div class="table-wrap stack-{stack}" class:dense role="region" aria-label={label} tabindex={stack === 'none' ? 0 : undefined}>
 	<table>
 		{@render children()}

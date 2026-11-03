@@ -3,7 +3,7 @@
 	import type { HTMLSelectAttributes } from 'svelte/elements';
 	import ChevronDown from '@lucide/svelte/icons/chevrons-up-down';
 
-	interface Props extends Omit<HTMLSelectAttributes, 'value'> {
+	interface Props extends Omit<HTMLSelectAttributes, 'value' | 'size'> {
 		value?: string | null;
 		invalid?: boolean;
 		size?: 'sm' | 'md';

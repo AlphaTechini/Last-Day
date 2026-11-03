@@ -1,5 +1,6 @@
 // Models selectable in Settings. Prices are USD per 1M tokens.
-// The engine engineer may update this file (and should keep it in sync with real Vultr Serverless Inference prices).
+// Source: Vultr Serverless Inference model catalog capture, late Oct 2026 (docs/API_REFERENCE.md section 5.2).
+// The catalog churns; prices here are the fallback used by the cost meter. The Vultr console Usage tab is authoritative.
 
 export interface ModelInfo {
 	id: string;
@@ -9,9 +10,7 @@ export interface ModelInfo {
 
 export const AVAILABLE_MODELS: ModelInfo[] = [
 	{ id: 'glm-5.3-flash', inputPer1M: 0.1, outputPer1M: 0.35 },
-	// TODO verify price
-	{ id: 'glm-5.2', inputPer1M: 0.6, outputPer1M: 2.2 },
-	// TODO verify price
+	{ id: 'glm-5.2', inputPer1M: 0.75, outputPer1M: 3.0 },
 	{ id: 'deepseek-v4.1-flash-1017', inputPer1M: 0.15, outputPer1M: 0.6 }
 ];
 

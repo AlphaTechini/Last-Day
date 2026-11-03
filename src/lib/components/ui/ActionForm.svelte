@@ -3,8 +3,7 @@
 	// with a pending state, success / error toasts, and a no-op in the dev preview.
 	import type { Snippet } from 'svelte';
 	import type { HTMLFormAttributes } from 'svelte/elements';
-	import { enhance } from '$app/forms';
-	import type { SubmitFunction } from '@sveltejs/kit';
+	import { enhance, type SubmitFunction } from '$app/forms';
 	import { toast } from '#lib/ui/toast.svelte.ts';
 	import { isPreviewMode } from '#lib/ui/context.ts';
 
@@ -21,6 +20,8 @@
 		onfailure?: (data: Record<string, unknown> | undefined) => void;
 		/** Called before submit; return false to cancel. */
 		onbefore?: (formData: FormData) => boolean | void;
+		/** Always called once the submission settles (success, failure, error, or preview no-op). */
+		onsettled?: () => void;
 		children: Snippet<[{ pending: boolean; submitter: string | null }]>;
 	}
 
@@ -32,6 +33,7 @@
 		onsuccess,
 		onfailure,
 		onbefore,
+		onsettled,
 		children,
 		...rest
 	}: Props = $props();
@@ -55,6 +57,7 @@
 				pending = false;
 				submitter = null;
 				toast.info('Preview only', `The "${which}" action is not wired up in the design preview.`);
+				onsettled?.();
 			}, 900);
 			return;
 		}
@@ -79,6 +82,7 @@
 			} finally {
 				pending = false;
 				submitter = null;
+				onsettled?.();
 			}
 		};
 	};
