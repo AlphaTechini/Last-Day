@@ -87,7 +87,7 @@ export class FakeConnector implements Connector {
 		return { method, endpoint, status, ms: 1 };
 	}
 
-	async revoke(account: Pick<NormalizedAccount, 'externalId' | 'kind' | 'parentExternalId' | 'username' | 'raw'>, action: ActionKind): Promise<ActionResult> {
+	async revoke(account: Pick<NormalizedAccount, 'externalId' | 'kind' | 'parentExternalId' | 'username' | 'raw'>, action: ActionKind, _ctx?: { snapshotId?: string | null }): Promise<ActionResult> {
 		const f = this.failures.get(action);
 		const endpoint = `/fake/${this.system}/${account.kind}/${account.externalId}/${action}`;
 		if (f && f.remaining > 0) {

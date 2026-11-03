@@ -64,12 +64,14 @@ export async function resetDemoImpl(actor: Actor): Promise<void> {
 		await audit({ actorId: actor.id, actorName: actor.name, kind: 'demo_reset', summary: `${actor.name} started a demo reset`, detail: { phase: 'start' } });
 		const wiped = await wipeDemoData();
 		const lines: string[] = [];
+		let seedError: unknown = null;
 		try {
 			const seed = await import('#lib/server/demo/seed.ts');
 			await seed.seedDemoCompany({ log: (l: string) => lines.push(l) });
 		} catch (e) {
-			await audit({ actorId: actor.id, actorName: actor.name, kind: 'demo_reset', summary: `Demo reset failed while seeding: ${errMessage(e)}`, detail: { phase: 'seed', error: errMessage(e), wiped, log: lines.slice(-30) } });
-			throw e;
+			// The seeder throws when any system failed; the systems that did seed are still worth sweeping.
+			seedError = e;
+			await audit({ actorId: actor.id, actorName: actor.name, kind: 'demo_reset', summary: `Demo seeding reported a problem: ${errMessage(e)}`, detail: { phase: 'seed', error: errMessage(e), wiped, log: lines.slice(-30) } });
 		}
 		const sweep = await sweepAllImpl(actor);
 		await audit({
@@ -77,8 +79,9 @@ export async function resetDemoImpl(actor: Actor): Promise<void> {
 			actorName: actor.name,
 			kind: 'demo_reset',
 			summary: `Demo company reset in ${Math.round((Date.now() - started) / 100) / 10}s: ${sweep.accounts} accounts swept, ${sweep.unknown} unknown`,
-			detail: { phase: 'done', wiped, sweep, log: lines.slice(-30) }
+			detail: { phase: 'done', wiped, sweep, seedError: seedError ? errMessage(seedError) : null, log: lines.slice(-30) }
 		});
+		if (seedError) throw seedError instanceof Error ? seedError : new Error(String(seedError));
 	} finally {
 		s.resetInFlight = false;
 	}

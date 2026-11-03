@@ -1,0 +1,1008 @@
+{
+ "_note": "BUILDER-MADE test set. Every employee, account and label here was invented by the Last Day builder for the identity-match benchmark; none of it comes from a real company, customer or person. Ground truth is the builder's own judgement, so treat the results as a regression check for the matcher and prompts, not as a measurement of accuracy on real data. 'category' names the kind of difficulty each case was written to test.",
+ "domain": "bench.example",
+ "employees": [
+  {
+   "id": "e01",
+   "name": "Dana Okafor",
+   "workEmail": "dana.okafor@bench.example",
+   "aliases": [
+    "dana.o@gmail.example",
+    "dokafor.dev@proton.example"
+   ],
+   "startDate": "2022-03-14",
+   "department": "Engineering",
+   "role": "Platform Engineer"
+  },
+  {
+   "id": "e02",
+   "name": "Robert Lindqvist",
+   "workEmail": "robert.lindqvist@bench.example",
+   "aliases": [
+    "bob.lindqvist@yahoo.example"
+   ],
+   "startDate": "2023-01-09",
+   "department": "Engineering",
+   "role": "Engineer"
+  },
+  {
+   "id": "e03",
+   "name": "Priya Raman",
+   "workEmail": "priya.raman@bench.example",
+   "aliases": [
+    "priya.raman@outlook.example"
+   ],
+   "startDate": "2020-06-01",
+   "department": "Engineering",
+   "role": "Engineering Manager"
+  },
+  {
+   "id": "e04",
+   "name": "Tomasz Wieczorek",
+   "workEmail": "tomasz.wieczorek@bench.example",
+   "aliases": [
+    "tomasz.w@fastmail.example"
+   ],
+   "startDate": "2019-03-11",
+   "department": "Engineering",
+   "role": "CTO"
+  },
+  {
+   "id": "e05",
+   "name": "Elizabeth Chen",
+   "workEmail": "elizabeth.chen@bench.example",
+   "aliases": [
+    "liz.chen@gmail.example"
+   ],
+   "startDate": "2021-09-20",
+   "department": "Design",
+   "role": "Designer"
+  },
+  {
+   "id": "e06",
+   "name": "Marcus Bell",
+   "workEmail": "marcus.bell@bench.example",
+   "aliases": [],
+   "startDate": "2022-11-02",
+   "department": "Sales",
+   "role": "Account Executive"
+  },
+  {
+   "id": "e07",
+   "name": "Olufemi Adeyemi",
+   "workEmail": "olufemi.adeyemi@bench.example",
+   "aliases": [
+    "femi.a@gmail.example"
+   ],
+   "startDate": "2023-05-15",
+   "department": "Engineering",
+   "role": "Engineer"
+  },
+  {
+   "id": "e08",
+   "name": "Sofia Marchetti",
+   "workEmail": "sofia.marchetti@bench.example",
+   "aliases": [
+    "sofia.marchetti@libero.example"
+   ],
+   "startDate": "2021-02-01",
+   "department": "Finance",
+   "role": "Controller"
+  },
+  {
+   "id": "e09",
+   "name": "Daniel Kowalski",
+   "workEmail": "daniel.kowalski@bench.example",
+   "aliases": [],
+   "startDate": "2024-02-12",
+   "department": "Engineering",
+   "role": "Engineer"
+  },
+  {
+   "id": "e10",
+   "name": "Hannah Berg",
+   "workEmail": "hannah.berg@bench.example",
+   "aliases": [
+    "hberg-contract"
+   ],
+   "startDate": "2024-06-03",
+   "department": "Engineering",
+   "role": "Contractor"
+  },
+  {
+   "id": "e11",
+   "name": "Wei Zhang",
+   "workEmail": "wei.zhang@bench.example",
+   "aliases": [
+    "wei.zhang@163.example"
+   ],
+   "startDate": "2022-08-22",
+   "department": "Engineering",
+   "role": "Engineer"
+  },
+  {
+   "id": "e12",
+   "name": "Dana Okonkwo",
+   "workEmail": "dana.okonkwo@bench.example",
+   "aliases": [],
+   "startDate": "2023-09-04",
+   "department": "Support",
+   "role": "Support Lead"
+  }
+ ],
+ "cases": [
+  {
+   "id": "c01",
+   "category": "exact_email",
+   "expectedEmployeeId": "e01",
+   "note": "",
+   "account": {
+    "system": "keycloak",
+    "kind": "user",
+    "username": "dana.okafor",
+    "displayName": "Dana Okafor",
+    "emails": [
+     "dana.okafor@bench.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c02",
+   "category": "exact_email",
+   "expectedEmployeeId": "e03",
+   "note": "case differs",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "praman",
+    "displayName": "Priya Raman",
+    "emails": [
+     "Priya.Raman@BENCH.EXAMPLE"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c03",
+   "category": "exact_email",
+   "expectedEmployeeId": "e04",
+   "note": "org invitation by email",
+   "account": {
+    "system": "github",
+    "kind": "invitation",
+    "username": null,
+    "displayName": null,
+    "emails": [
+     "tomasz.wieczorek@bench.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c04",
+   "category": "exact_email",
+   "expectedEmployeeId": "e05",
+   "note": "",
+   "account": {
+    "system": "keycloak",
+    "kind": "user",
+    "username": "echen",
+    "displayName": "Elizabeth Chen",
+    "emails": [
+     "stray@example.org",
+     "elizabeth.chen@bench.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c05",
+   "category": "exact_email",
+   "expectedEmployeeId": "e06",
+   "note": "",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "mbell",
+    "displayName": "Marcus Bell",
+    "emails": [
+     "marcus.bell@bench.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c06",
+   "category": "exact_email",
+   "expectedEmployeeId": "e08",
+   "note": "",
+   "account": {
+    "system": "keycloak",
+    "kind": "user",
+    "username": "smarchetti",
+    "displayName": "Sofia Marchetti",
+    "emails": [
+     "sofia.marchetti@bench.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c07",
+   "category": "exact_email",
+   "expectedEmployeeId": "e11",
+   "note": "",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "wzhang-dev",
+    "displayName": "Wei Zhang",
+    "emails": [
+     "wei.zhang@bench.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c08",
+   "category": "username_localpart",
+   "expectedEmployeeId": "e02",
+   "note": "username equals work email local part",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "robert.lindqvist",
+    "displayName": null,
+    "emails": [],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c09",
+   "category": "username_localpart",
+   "expectedEmployeeId": "e07",
+   "note": "",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "olufemi.adeyemi",
+    "displayName": null,
+    "emails": [],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c10",
+   "category": "sso_subject",
+   "expectedEmployeeId": "e09",
+   "note": "",
+   "account": {
+    "system": "keycloak",
+    "kind": "user",
+    "username": "dk-idp",
+    "displayName": "D Kowalski",
+    "emails": [],
+    "createdAt": null,
+    "raw": {
+     "federatedIdentities": [
+      {
+       "identityProvider": "google",
+       "userId": "118273",
+       "userName": "daniel.kowalski@bench.example"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c11",
+   "category": "sso_subject",
+   "expectedEmployeeId": "e10",
+   "note": "",
+   "account": {
+    "system": "keycloak",
+    "kind": "user",
+    "username": "hb",
+    "displayName": "H B",
+    "emails": [],
+    "createdAt": null,
+    "raw": {
+     "federatedIdentities": [
+      {
+       "identityProvider": "google",
+       "userId": "99120",
+       "userName": "hannah.berg@bench.example"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c12",
+   "category": "exact_email",
+   "expectedEmployeeId": "e12",
+   "note": "the other Dana, exact email",
+   "account": {
+    "system": "keycloak",
+    "kind": "user",
+    "username": "dokonkwo",
+    "displayName": "Dana Okonkwo",
+    "emails": [
+     "dana.okonkwo@bench.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c13",
+   "category": "alias_email",
+   "expectedEmployeeId": "e01",
+   "note": "personal email listed as alias; created 2 days after start",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "dok-dev",
+    "displayName": "Dana O.",
+    "emails": [
+     "dana.o@gmail.example"
+    ],
+    "createdAt": "2022-03-16T10:00:00Z",
+    "raw": {}
+   }
+  },
+  {
+   "id": "c14",
+   "category": "alias_email",
+   "expectedEmployeeId": "e01",
+   "note": "",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "dok",
+    "displayName": "D. O.",
+    "emails": [
+     "dokafor.dev@proton.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c15",
+   "category": "alias_email",
+   "expectedEmployeeId": "e03",
+   "note": "",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "praman-eng",
+    "displayName": "Priya R",
+    "emails": [
+     "priya.raman@outlook.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c16",
+   "category": "alias_email",
+   "expectedEmployeeId": "e04",
+   "note": "",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "twieczorek",
+    "displayName": "Tomasz W.",
+    "emails": [
+     "tomasz.w@fastmail.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c17",
+   "category": "alias_email",
+   "expectedEmployeeId": "e08",
+   "note": "",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "sofia_m",
+    "displayName": "Sofia",
+    "emails": [
+     "sofia.marchetti@libero.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c18",
+   "category": "alias_email",
+   "expectedEmployeeId": "e11",
+   "note": "name order swapped",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "zw-codes",
+    "displayName": "Zhang Wei",
+    "emails": [
+     "wei.zhang@163.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c19",
+   "category": "nickname",
+   "expectedEmployeeId": "e02",
+   "note": "Bob = Robert",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "bobl",
+    "displayName": "Bob L",
+    "emails": [],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c20",
+   "category": "nickname",
+   "expectedEmployeeId": "e02",
+   "note": "",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "boblindqvist",
+    "displayName": "Bob Lindqvist",
+    "emails": [
+     "bob.lindqvist@yahoo.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c21",
+   "category": "nickname",
+   "expectedEmployeeId": "e05",
+   "note": "",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "liz-c",
+    "displayName": "Liz Chen",
+    "emails": [
+     "liz.chen@gmail.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c22",
+   "category": "nickname",
+   "expectedEmployeeId": "e05",
+   "note": "",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "lizzy",
+    "displayName": "Lizzy C",
+    "emails": [],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c23",
+   "category": "nickname",
+   "expectedEmployeeId": "e07",
+   "note": "",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "femi-a",
+    "displayName": "Femi Adeyemi",
+    "emails": [
+     "femi.a@gmail.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c24",
+   "category": "nickname",
+   "expectedEmployeeId": "e09",
+   "note": "Danny = Daniel",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "dank",
+    "displayName": "Danny K",
+    "emails": [],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c25",
+   "category": "initials_handle",
+   "expectedEmployeeId": "e06",
+   "note": "first initial + last name",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "mbell-sales",
+    "displayName": "M. Bell",
+    "emails": [
+     "mbell@sales-tools.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c26",
+   "category": "initials_handle",
+   "expectedEmployeeId": "e02",
+   "note": "",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "rlindqvist",
+    "displayName": "R. Lindqvist",
+    "emails": [],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c27",
+   "category": "contractor_alias",
+   "expectedEmployeeId": "e10",
+   "note": "contractor handle listed as alias",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "hberg-contract",
+    "displayName": "Hannah B.",
+    "emails": [],
+    "createdAt": "2024-06-05T09:00:00Z",
+    "raw": {}
+   }
+  },
+  {
+   "id": "c28",
+   "category": "contractor_alias",
+   "expectedEmployeeId": "e10",
+   "note": "",
+   "account": {
+    "system": "keycloak",
+    "kind": "user",
+    "username": "contractor-hberg",
+    "displayName": "Berg, Hannah (contractor)",
+    "emails": [],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c29",
+   "category": "typo",
+   "expectedEmployeeId": "e04",
+   "note": "missing z",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "tomas.wieczorek",
+    "displayName": "Tomas Wieczorek",
+    "emails": [],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c30",
+   "category": "server_tag",
+   "expectedEmployeeId": "e01",
+   "note": "server owner only in a tag; two Danas exist",
+   "account": {
+    "system": "vultr",
+    "kind": "instance",
+    "username": "build-runner-02",
+    "displayName": "build-runner-02",
+    "emails": [],
+    "createdAt": null,
+    "raw": {
+     "label": "build-runner-02",
+     "tags": [
+      "owner:dana",
+      "env:ci"
+     ],
+     "plan": "vc2-1c-1gb",
+     "region": "ewr"
+    }
+   }
+  },
+  {
+   "id": "c31",
+   "category": "server_tag",
+   "expectedEmployeeId": "e06",
+   "note": "",
+   "account": {
+    "system": "vultr",
+    "kind": "instance",
+    "username": "mb-demo-box",
+    "displayName": "mb-demo-box",
+    "emails": [],
+    "createdAt": null,
+    "raw": {
+     "label": "mb-demo-box",
+     "tags": [
+      "owner:marcus.bell"
+     ],
+     "plan": "vc2-1c-1gb"
+    }
+   }
+  },
+  {
+   "id": "c32",
+   "category": "personal_email_only",
+   "expectedEmployeeId": "e11",
+   "note": "pending invite to the personal address",
+   "account": {
+    "system": "github",
+    "kind": "invitation",
+    "username": null,
+    "displayName": null,
+    "emails": [
+     "wei.zhang@163.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c33",
+   "category": "different_domain",
+   "expectedEmployeeId": "e03",
+   "note": "same full name, unknown domain; HR cannot confirm but name is exact and the account is in the company org",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "pr-platform",
+    "displayName": "Priya Raman",
+    "emails": [
+     "priya@platform-consulting.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c34",
+   "category": "lookalike",
+   "expectedEmployeeId": null,
+   "note": "different person with a similar name",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "dokafor-smith",
+    "displayName": "Dana Okafor-Smith",
+    "emails": [
+     "dana@smith-family.example"
+    ],
+    "createdAt": "2019-05-01T00:00:00Z",
+    "raw": {}
+   }
+  },
+  {
+   "id": "c35",
+   "category": "lookalike",
+   "expectedEmployeeId": null,
+   "note": "same name, other company email",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "okafor-dana-2",
+    "displayName": "Dana Okafor",
+    "emails": [
+     "dana.okafor@othercorp.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c36",
+   "category": "lookalike",
+   "expectedEmployeeId": null,
+   "note": "bare first name; two Danas on staff, nothing disambiguates",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "dana",
+    "displayName": "Dana",
+    "emails": [],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c37",
+   "category": "lookalike",
+   "expectedEmployeeId": null,
+   "note": "same first name only",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "robert-fischer",
+    "displayName": "Robert Fischer",
+    "emails": [
+     "rfischer@example.org"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c38",
+   "category": "lookalike",
+   "expectedEmployeeId": null,
+   "note": "similar surname",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "priyaraman88",
+    "displayName": "Priya Ramanathan",
+    "emails": [
+     "priya.ramanathan@example.org"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c39",
+   "category": "lookalike",
+   "expectedEmployeeId": null,
+   "note": "looks like Marcus Bell",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "mbelle",
+    "displayName": "Marc Belle",
+    "emails": [],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c40",
+   "category": "lookalike",
+   "expectedEmployeeId": null,
+   "note": "common name, unrelated person",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "wei-zhang-photo",
+    "displayName": "Wei Zhang",
+    "emails": [
+     "weiz@photo-studio.example"
+    ],
+    "createdAt": "2015-01-01T00:00:00Z",
+    "raw": {}
+   }
+  },
+  {
+   "id": "c41",
+   "category": "lookalike",
+   "expectedEmployeeId": null,
+   "note": "initial only, ambiguous",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "daniel-k",
+    "displayName": "Daniel K",
+    "emails": [
+     "dkowal@example.net"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c42",
+   "category": "lookalike",
+   "expectedEmployeeId": null,
+   "note": "public artist with the same name",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "sofia-marchetti-art",
+    "displayName": "Sofia Marchetti",
+    "emails": [
+     "sofia@marchetti-art.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c43",
+   "category": "service",
+   "expectedEmployeeId": null,
+   "note": "",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "ci-bot",
+    "displayName": "CI Bot",
+    "emails": [
+     "ci@bench.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c44",
+   "category": "service",
+   "expectedEmployeeId": null,
+   "note": "",
+   "account": {
+    "system": "keycloak",
+    "kind": "service",
+    "username": "svc-backup",
+    "displayName": "Backup service",
+    "emails": [],
+    "createdAt": null,
+    "raw": {
+     "description": "nightly backups"
+    }
+   }
+  },
+  {
+   "id": "c45",
+   "category": "service",
+   "expectedEmployeeId": null,
+   "note": "shared mailbox",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "alerts",
+    "displayName": "Alerts",
+    "emails": [
+     "alerts@bench.example"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c46",
+   "category": "service",
+   "expectedEmployeeId": null,
+   "note": "",
+   "account": {
+    "system": "vultr",
+    "kind": "instance",
+    "username": "prod-db-01",
+    "displayName": "prod-db-01",
+    "emails": [],
+    "createdAt": null,
+    "raw": {
+     "label": "prod-db-01",
+     "tags": [
+      "env:prod",
+      "team:platform"
+     ]
+    }
+   }
+  },
+  {
+   "id": "c47",
+   "category": "service",
+   "expectedEmployeeId": null,
+   "note": "",
+   "account": {
+    "system": "vultr",
+    "kind": "instance",
+    "username": "jump-host",
+    "displayName": "jump-host",
+    "emails": [],
+    "createdAt": null,
+    "raw": {
+     "label": "jump-host",
+     "tags": [
+      "shared"
+     ]
+    }
+   }
+  },
+  {
+   "id": "c48",
+   "category": "unrelated",
+   "expectedEmployeeId": null,
+   "note": "",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "octocat42",
+    "displayName": "Mona Lisa",
+    "emails": [
+     "mona@example.org"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c49",
+   "category": "unrelated",
+   "expectedEmployeeId": null,
+   "note": "",
+   "account": {
+    "system": "mattermost",
+    "kind": "user",
+    "username": "jsmith",
+    "displayName": "John Smith",
+    "emails": [],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c50",
+   "category": "unrelated",
+   "expectedEmployeeId": null,
+   "note": "invitation to someone not on staff",
+   "account": {
+    "system": "github",
+    "kind": "invitation",
+    "username": null,
+    "displayName": null,
+    "emails": [
+     "new.hire@example.org"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  },
+  {
+   "id": "c51",
+   "category": "unrelated",
+   "expectedEmployeeId": null,
+   "note": "",
+   "account": {
+    "system": "github",
+    "kind": "user",
+    "username": "zed-coder",
+    "displayName": "Zed Coder",
+    "emails": [
+     "zed@example.org"
+    ],
+    "createdAt": null,
+    "raw": {}
+   }
+  }
+ ]
+}

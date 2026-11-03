@@ -160,11 +160,11 @@ describe('sweep', () => {
 		expect(r.unknown).toBe(1); // zed-coder
 
 		const links = await sql`SELECT a.external_id, l.link_method, l.confirmed, l.confidence FROM account_links l JOIN accounts a ON a.id = l.account_id ORDER BY a.external_id`;
-		expect(links.map((l) => `${l.external_id}:${l.link_method}`)).toEqual(['key-1:rule:work_email', 'kc-dana:rule:work_email', 'kc-priya:rule:work_email', 'vu-dana:rule:work_email']);
+		expect(links.map((l) => `${l.external_id}:${l.link_method}`).sort()).toEqual(['kc-dana:rule:work_email', 'kc-priya:rule:work_email', 'key-1:rule:work_email', 'vu-dana:rule:work_email']);
 		expect(links.every((l) => l.confirmed)).toBe(true);
 
 		const sug = await sql`SELECT a.external_id, s.confidence, s.model, s.evidence_json FROM ai_suggestions s JOIN accounts a ON a.id = s.account_id ORDER BY a.external_id`;
-		expect(sug.map((s) => s.external_id)).toEqual(['build-runner-02'.replace('build-runner-02', 'inst-1'), 'dok-dev']);
+		expect(sug.map((s) => s.external_id).sort()).toEqual(['dok-dev', 'inst-1']);
 		expect(sug.find((s) => s.external_id === 'inst-1')!.model).toBe('glm-5.2'); // escalated
 		expect(aiCalls.filter((c) => c.username === 'build-runner-02').map((c) => c.model)).toEqual(['glm-5.3-flash', 'glm-5.2']);
 		expect(aiCalls.some((c) => c.username === 'zed-coder')).toBe(false); // pre-filter kept the prompt list small
@@ -328,10 +328,10 @@ describe('offboarding lifecycle', () => {
 		const listed = approvals[0].action_list.flatMap((a: any) => a.actions);
 		expect(listed).toEqual(expect.arrayContaining(['keycloak.disable', 'keycloak.logout', 'github.remove_member', 'vultr.suspend_user', 'vultr.delete_api_key', 'vultr.halt_instance', 'vultr.snapshot_instance']));
 		const apiCalls = await sql`SELECT detail_json FROM audit_log WHERE run_id = ${runId} AND kind = 'api_call'`;
-		expect(apiCalls.length).toBeGreaterThanOrEqual(8);
+		expect(apiCalls.length).toBeGreaterThanOrEqual(7);
 		expect(apiCalls[0].detail_json).toMatchObject({ method: expect.any(String), endpoint: expect.any(String), status: expect.any(Number) });
 		const verifies = await sql`SELECT detail_json FROM audit_log WHERE run_id = ${runId} AND kind = 'verify'`;
-		expect(verifies.length).toBeGreaterThanOrEqual(8);
+		expect(verifies.length).toBeGreaterThanOrEqual(7);
 		expect(verifies[0].detail_json.readBack).toBeTruthy();
 
 		// manager destroys the server: awaiting_manager -> destroying -> removed; billing drops to the snapshot

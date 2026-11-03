@@ -236,7 +236,7 @@ export async function approveItemsImpl(runId: string, itemIds: string[] | 'all',
 		}
 		if (!chosen.length) {
 			const live = items.filter((i) => i.status !== 'rejected');
-			if (live.length === 0) return { chosen: [] as Row[], empty: true, employeeId: run.employee_id as string };
+			if (live.length === 0) return { chosen: [] as Row[], empty: true, employeeId: run.employee_id as string, approvalId: '', actionList: [] as unknown[] };
 			throw new Error('Nothing is waiting for approval');
 		}
 		const actionList = chosen.map((i) => ({
@@ -251,16 +251,7 @@ export async function approveItemsImpl(runId: string, itemIds: string[] | 'all',
 			VALUES (${runId}, ${actor.id}, 'hr_revoke', ${chosen.map((i) => i.id)}, ${tx.json(actionList as never)}) RETURNING id`;
 		await tx`UPDATE run_items SET status = 'approved', approval_id = ${approval.id}, last_error = NULL WHERE id IN ${tx(chosen.map((i) => i.id))}`;
 		await tx`UPDATE runs SET status = 'executing' WHERE id = ${runId}`;
-		await audit({
-			actorId: actor.id,
-			actorName: actor.name,
-			runId,
-			employeeId: run.employee_id,
-			kind: 'approval',
-			summary: `${actor.name} approved revocation of ${chosen.length} item${chosen.length === 1 ? '' : 's'}`,
-			detail: { approvalId: approval.id, scope: 'hr_revoke', actionList }
-		});
-		return { chosen, empty: false, employeeId: run.employee_id as string };
+		return { chosen, empty: false, employeeId: run.employee_id as string, approvalId: approval.id as string, actionList };
 	});
 
 	if (queued.empty) {
@@ -269,6 +260,15 @@ export async function approveItemsImpl(runId: string, itemIds: string[] | 'all',
 		await finishRunIfDone(runId);
 		return;
 	}
+	await audit({
+		actorId: actor.id,
+		actorName: actor.name,
+		runId,
+		employeeId: queued.employeeId,
+		kind: 'approval',
+		summary: `${actor.name} approved revocation of ${queued.chosen.length} item${queued.chosen.length === 1 ? '' : 's'}`,
+		detail: { approvalId: queued.approvalId, scope: 'hr_revoke', actionList: queued.actionList }
+	});
 	// Kick the executor in the background; the route does not wait for it.
 	for (const i of queued.chosen) enqueueJob(i.system, { type: 'revoke', itemId: i.id, runId });
 }
@@ -306,9 +306,9 @@ export async function destroyServerImpl(runId: string, itemId: string, actor: Ac
 			INSERT INTO approvals (run_id, approver_id, scope, item_ids, action_list)
 			VALUES (${runId}, ${actor.id}, 'manager_destroy', ${[itemId]}, ${tx.json([{ itemId, system: i.system, account: i.username ?? i.display_name ?? i.external_id, actions: ['vultr.destroy_instance'] }] as never)}) RETURNING id`;
 		await tx`UPDATE run_items SET status = 'destroying', destroy_approval_id = ${approval.id}, last_error = NULL, steps_json = ${tx.json(steps as never)} WHERE id = ${itemId}`;
-		await audit({ actorId: actor.id, actorName: actor.name, runId, employeeId: i.employee_id, system: i.system, kind: 'approval', summary: `${actor.name} approved destroying ${i.username ?? i.display_name ?? i.external_id}`, detail: { approvalId: approval.id, scope: 'manager_destroy', itemId } });
-		return i;
+		return { ...(i as Row), approvalId: approval.id as string } as Row;
 	});
+	await audit({ actorId: actor.id, actorName: actor.name, runId, employeeId: item.employee_id, system: item.system, kind: 'approval', summary: `${actor.name} approved destroying ${item.username ?? item.display_name ?? item.external_id}`, detail: { approvalId: item.approvalId, scope: 'manager_destroy', itemId } });
 	enqueueJob(item.system, { type: 'destroy', itemId, runId });
 }
 

@@ -223,6 +223,12 @@ async function processRevoke(itemId: string): Promise<void> {
 			detail: { itemId, action: step.action, confirmed: v.confirmed, readBack: v.observed, timedOut: v.timedOut, polls: v.attempts, calls: v.calls, ...(c ? { method: c.method, endpoint: c.endpoint, status: c.status } : {}) }
 		});
 		observed.push(v.observed);
+		if (step.action === 'vultr.snapshot_instance' && v.confirmed && v.output) {
+			// The snapshot's own read-back is the authority on its size and cost.
+			const c = Number(v.output.snapshotMonthlyCostUsd);
+			if (Number.isFinite(c)) snapshotCost = c;
+			else if (Number.isFinite(Number(v.output.snapshotSizeGb))) snapshotCost = snapshotMonthlyCost(Number(v.output.snapshotSizeGb));
+		}
 		if (!v.confirmed) {
 			allConfirmed = false;
 			firstFailure ||= `${step.label}: ${v.observed}`;

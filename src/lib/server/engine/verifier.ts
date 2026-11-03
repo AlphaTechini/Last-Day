@@ -11,6 +11,8 @@ export interface VerifyOutcome {
 	/** Still `pending` when the time budget ran out. */
 	timedOut: boolean;
 	attempts: number;
+	/** Extra read-back data from the connector, e.g. snapshot size and monthly cost. */
+	output?: Record<string, unknown>;
 }
 
 /**
@@ -31,13 +33,15 @@ export async function verifyAction(
 	let attempts = 0;
 	let errors = 0;
 	let observed = '';
+	let output: Record<string, unknown> | undefined;
 	for (;;) {
 		attempts++;
 		try {
 			const r = await connector.verify(account, action, ctx);
 			calls.push(...r.calls);
 			observed = r.observed;
-			if (!r.pending) return { confirmed: r.confirmed, observed, calls, timedOut: false, attempts };
+			output = r.output ?? output;
+			if (!r.pending) return { confirmed: r.confirmed, observed, calls, timedOut: false, attempts, output };
 			observed = r.observed || 'pending';
 		} catch (e) {
 			errors++;

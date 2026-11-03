@@ -15,6 +15,7 @@
 		"test": "vitest run",
 		"db:migrate": "tsx scripts/migrate.ts",
 		"seed": "tsx scripts/seed-demo-company.ts",
+		"benchmark": "tsx scripts/benchmark-matching.ts",
 		"mock": "tsx scripts/mock-company/server.ts",
 		"connect:mock": "tsx scripts/connect-mock.ts",
 		"prepare": "svelte-kit sync || echo ''"
