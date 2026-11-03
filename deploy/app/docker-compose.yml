@@ -29,7 +29,9 @@ services:
       - ../../.env
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      ORIGIN: https://${APP_DOMAIN}
+      # adapter-node 6 removed ORIGIN; derive the origin from Caddy's forwarded headers.
+      PROTOCOL_HEADER: x-forwarded-proto
+      HOST_HEADER: x-forwarded-host
     depends_on:
       db:
         condition: service_healthy
