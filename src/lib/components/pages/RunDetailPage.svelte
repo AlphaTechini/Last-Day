@@ -54,8 +54,7 @@
 	const segments: Segment[] = $derived([
 		{ value: doneCount, tone: 'success', label: 'Confirmed' },
 		{ value: counted.filter((i) => i.status === 'running' || i.status === 'destroying').length, tone: 'accent', label: 'Running' },
-		{ value: failedItems.length, tone: 'danger', label: 'Failed' },
-		{ value: proposedCount, tone: 'ai', label: 'Needs decision' }
+		{ value: failedItems.length, tone: 'danger', label: 'Failed' }
 	]);
 
 	const regressionByItem = $derived(new Map((run.recheckResult?.diff ?? []).map((d) => [d.itemId, d.observed])));

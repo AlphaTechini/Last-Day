@@ -250,7 +250,7 @@
 	.logo-mark {
 		display: none;
 	}
-	.drawer-close {
+	.icon-btn.drawer-close {
 		display: none;
 	}
 
@@ -630,7 +630,7 @@
 			transform: none;
 			box-shadow: var(--shadow-xl);
 		}
-		.drawer-close {
+		.icon-btn.drawer-close {
 			display: grid;
 		}
 		.scrim {
