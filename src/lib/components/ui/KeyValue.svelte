@@ -1,4 +1,4 @@
-<script lang="ts">
+<script module lang="ts">
 	import type { Snippet } from 'svelte';
 
 	export interface KVItem {
@@ -7,7 +7,9 @@
 		mono?: boolean;
 		render?: Snippet;
 	}
+</script>
 
+<script lang="ts">
 	let { items, layout = 'rows', dense = false }: { items: KVItem[]; layout?: 'rows' | 'grid'; dense?: boolean } = $props();
 </script>
 
